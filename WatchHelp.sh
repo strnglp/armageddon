@@ -4,10 +4,11 @@ trap "stty $original_stty; echo 'Exiting...'; exit 0" SIGINT EXIT
 stty -echo -icanon time 0 min 0
 clear
 printf '\033[3J'
+
 ARMDIR=$(echo ~/Armageddon)
-mkdir -p $ARMDIR/ArmLogs
+mkdir -p "$ARMDIR/ArmLogs"
 FILE="$ARMDIR/ArmLogs/help.txt"
-touch $FILE
+touch "$FILE"
 
 last_mod_time=0
 
@@ -20,5 +21,6 @@ while true; do
     cat "$FILE"
     printf "<Ctrl-C to close>"
   fi
-  read -r -s -n 1 key
+  # Use `stty` to prevent any input being processed
+  read -r -s -n 1 -t 0.1 key 2>/dev/null
 done
