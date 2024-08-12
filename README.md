@@ -46,7 +46,7 @@ Change your terminal emulator's default font to the NerdFont you just installed.
 The only essential configuration required is inside `Login.tin`. Add your username and password there, or just delete those lines if you prefer to type them at login every time.
 
 ### Infobar (required)
-Once you have logged in for the first time type this command to setup the prompt and color settings these scripts require.
+Once you have logged in for the first time (see [Play](#play)) type this command to setup the prompt and color settings these scripts require.
 `InstallInfobar`
 
 ### Optional configuration
