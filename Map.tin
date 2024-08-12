@@ -1,0 +1,134 @@
+#echo {Loading map.}
+#nop -------------------------------------------------------------------------
+#nop Map actions are imperfect, if you discover a scenario where the map 
+#nop shouldn't have moved, add the line here. It is helpful to understand
+#nop #map and its various commands, most especially #map undo/goto/move
+#nop -------------------------------------------------------------------------
+
+#action {You plummet to the ground below} {#map move d} 
+#action {%*You flee, heading %.} {#map move %2} 
+#action {You follow %1, and walk %.} {#map move %2}
+#action {You follow %1, and run %.} {#map move %2}
+#action {You follow %1, and stealthily move %.} {#map move %2}
+#action {You are too exhausted} {#map undo} 
+#action {You cannot go '%1', there is no exit that way.} {#map undo}
+#action {You'll need at least one hand free for the reins.} {#map undo}
+#action {^You can't take a mount there.} {#map undo}
+#action {The %1 prevents you from moving %2.} {#map undo}
+#action {You attempt to walk, but trip and fall on your face.} {#map undo}
+#action {^The door seems to be closed.} {#map undo}
+#action {^The gate seems to be closed.} {#map undo}
+#action {^You try to climb, but slip.} {#map undo}
+#action {Maybe you should get on your feet first.} {#map undo}
+#action {That opening is too small for you.} {#map undo}
+#action {^You feel too relaxed to do that.} {#map undo}
+#action {, stepping in front of you.$} {#map undo}
+#action {steps in front of you, blocking your path.$} {#map undo}
+#action {scowls at you and blocks their path into the warehouse.$} {#map undo}
+#action {blocking your passage.$} {#map undo}
+#action {, there is no exit that way.$} {#map undo}
+#action {^The gates seems to be closed.$} {#map undo}
+#action {^You must be running or sneaking to get past a guard.$} {#map undo}
+#action {^You try to go up but fall.$} {#map undo}
+
+#nop these aliases keep the map in line when emotes are used with move directions
+#alias {{n|e|s|w|u|d} (%*)} {#send %1 (%2); #map move %1}
+#alias {north (%1)} {#send n (%1); #map move n}
+#alias {east (%1)} {#send e (%1); #map move e}
+#alias {south (%1)} {#send s (%1); #map move s}
+#alias {west (%1)} {#send w (%1); #map move w}
+
+#nop Also stop any potential map pathing when sending stop command
+#alias {stop} {#path stop; #send stop}
+
+
+
+#nop -------------------------------------------------------------------------
+#nop mapPING MOUSE EVENTS: Click and drag the map around and it will move the centre
+#nop double click and it will show you information on that room
+#nop Click middle mouse button and it will walk you there with #map run
+#nop -------------------------------------------------------------------------
+
+
+#nop MOUSE EVENTS
+#event {MAP REGION PRESSED MOUSE BUTTON ONE} {
+        #var {o_x} %0;
+        #var {o_y} %1;
+        #var {pressed_at} %0
+}
+
+#event {MAP REGION MOVED MOUSE BUTTON ONE} {
+        #var d_x %0;
+        #var d_y %1;
+        #math {c_x} {$o_x - $d_x};
+        #math {c_y} {$d_y - $o_y};
+        #map center $c_y $c_x 0
+}
+
+#event {MAP ROOM DOUBLE-CLICKED MOUSE BUTTON ONE} {#echo {${FG_BGREEN}Room: vnum %4}; #map at %4 #map set}
+
+#nop movement timing for reference
+#nop Note: My walk speed =~ 3.6 seconds
+#variable {walktimer} {0}
+#alias {walktimer on} { #variable {walktimer} {1}}
+#alias {walktimer off} { #variable {walktimer} {0}}
+#variable {prev_room_time} {0}
+#variable {cur_room_time} {0}
+#nop When entering a room, update the map DB with the room name
+#nop Note: MarshallDFX's script saved a lot more information
+#nop TODO: Bring back that functionality
+#action {~^${GAME_ROOM}%*${GAME_EXITS} \[%*\]} {
+        #if {$walk_timer} {
+                #variable {prev_room_time} {$cur_room_time};
+                #echo {Prev: %s Cur: %s} {$prev_room_time} {$cur_room_time};
+                #script {now} {perl -MTime::HiRes=clock_gettime -e 'print clock_gettime(0)'};
+                #variable {cur_room_time} {$now[1]};
+                #script {elapsed_time} {perl -e 'print $cur_room_time - $prev_room_time'};
+                #echo {Walk time: %s} {$elapsed_time[1]};
+        };
+        #nop mapping highlights and info;
+        #map set roomname %1;
+        #regexp {%2} {{^Inside the.*Gate|Road|Circle|Walk|Way|Path|Street|Aisle|Archway|Plaza|Alley|Alleyway}} {
+                #map get {roomsymbol} {symbol};
+                #if {{$symbol} == "{| }"} {
+                        #map set roomcolor ${FG_BYELLOW}
+                }
+        } {};
+}
+
+#nop aliases for highlighting rooms.
+#alias {mapreset} {#map set roomsymbol \ ; #map set roomcolor ${FG_BWHITE}}
+#alias {maproad} {#map set roomcolor ${FG_BYELLOW}}
+#alias {mapshop} {#map set roomsymbol ; #map set roomcolor ${FG_BGREEN}}
+#alias {maptavern} {#map set roomsymbol ; #map set roomcolor ${FG_BCYAN}}
+#alias {mapstable} {#map set roomsymbol 󱗁; #map set roomcolor ${FG_BBLUE}}
+#alias {mapapt} {#map set roomsymbol ; #map set roomcolor ${FG_BMAGENTA}}
+#alias {mapwarehouse} {#map set roomsymbol 󰾁; #map set roomcolor ${FG_BMAGENTA}}
+#alias {mapgate} {#map set roomsymbol 󰊙; #map set roomcolor ${FG_YELLOW}}
+
+
+#nop load map
+#variable {map} {$armdir/MyMap.map}
+#script {mapexists} {[ -e $map ] && echo 1}
+#if {"$mapexists[1]" === "1"} {
+        #echo {Map found, reading.};
+        #map read $map;
+        #map return;
+}
+{
+        #echo {Map not found, creating.};
+        #map create 200000;
+        #map goto 1;
+        #map write $map;
+}
+
+#map flag vtmap on
+#map offset 4 87 -6 -1
+#map flag direction off
+#map legend {ascii nesw misc} {user} {󱣣}
+
+
+
+#nop autosave map
+#action {Come back soon!} {#map write $map}
+#ticker {map_timer} {#map write $map} {180}

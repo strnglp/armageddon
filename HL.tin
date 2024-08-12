@@ -1,0 +1,112 @@
+#echo {Loading highlights.}
+#alias {loadhl} {#read ${armdir}/HL.tin}
+
+#highlight {you topple over and fall to the ground} {$CRITICAL} {5}
+#highlight {A foreign presence contacts your mind%*} {$HIGH} {5}
+#highlight {A staff member sends} {$HIGH} {5}
+#highlight {Your psychic barrier is crushed%*} {$CRITICAL} {5}
+#highlight {A loud bell chimes, echoing across the city%*} {$INFO} {5}
+#highlight {The body of } {$CRITICAL} {5}
+#highlight {The {severed} head of } {$CRITICAL} {5}
+#highlight {{To the (north|south|east|west)(\ and (north|south|east|west))?}} {$INFO} {5}
+#highlight {You follow} {$LOW} {5}
+#highlight {You notice } {$LOW} {5}
+#highlight {falls in behind you} {$LOW} {5}
+#highlight {refuses to move} {$LOW} {5}
+#highlight {throws you from its back} {$MEDIUM} {5}
+#highlight {too fast for you, so you lag behind} {$MEDIUM} {5}
+#highlight {{North|South|West|East} of here} {$INFO} {5}
+#highlight {{walks|runs|sneaks|run|sneak|walk} {north|south|west|east|up|down}} {$INFO} {5}
+#highlight {You already have} {$INFO} {5}
+#highlight {You are dehydrated%*} {$HIGH} {5}
+#highlight {You suffer from dehydration%*} {$CRITICAL} {5}
+#highlight {You are famished%*} {$HIGH} {5}
+#highlight {You are starving%*} {$CRITICAL} {5}
+#highlight {You are wanted in} {$MEDIUM} {5}
+#highlight {a strange taste} {$HIGH} {5}
+#highlight {You feel burning poison in your blood, and suffer%*} {$CRITICAL} {5}
+#highlight {looks really sick, and shivers uncomfortably} {$HIGH} {5}
+#highlight {You lost your concentration} {$MEDIUM} {5}
+#highlight {Your concentration falters...} {$MEDIUM} {5}
+#highlight {You subdue} {$MEDIUM} {5}
+#highlight {You're now wanted%*} {$HIGH} {5}
+#highlight {[armed]} {$INFO} {5}
+#highlight {[running]} {$INFO} {5}
+#highlight {[sneaking]} {$INFO} {5}
+#highlight {^%s"%0"} {$INFO} {5}
+#highlight {asks you,} {$YOU} {5}
+#highlight {says to you} {$YOU} {5}
+#highlight {out of character} {$INFO} {5}
+#highlight {^<both hands> %*} {$INFO} {5}
+#highlight {^<primary hand> %*} {$INFO} {5}
+#highlight {^<secondary hand> %*} {$INFO} {5}
+#highlight {^At your table,} {$INFO} {5}
+#highlight {and knocks you over} {$CRITICAL} {5}
+#highlight {arrow flies in from} {$MEDIUM} {5}
+#highlight {attack reversed} {$MEDIUM} {5}
+#highlight {attacks {the|a} } {$MEDIUM} {5}
+#highlight {\ at you} {$YOU} {5}
+#highlight {begins fighting} {$MEDIUM} {5}
+#highlight {begins guarding } {$MEDIUM} {5}
+#highlight {chasm} {$HIGH} {5}
+#highlight {{^(.*?)crumples to the ground(.*?)$}} {$MEDIUM} {5}
+#highlight {darts in front of you} {$LOW} {5}
+#highlight {fail the rescue} {$MEDIUM} {5}
+#highlight {from your hands} {$CRITICAL} {5}
+#highlight {fumble and drop} {$CRITICAL} {5}
+#highlight {fumbles} {$MEDIUM} {5}
+#highlight {gives you} {$YOU} {5}
+#highlight {has arrived from %*} {$INFO} {5}
+#highlight {is not fighting anyone} {$INFO} {5}
+#highlight {nimbly avoids your bash} {$CRITICAL} {5}
+#highlight {protects you from harm} {$LOW} {5}
+#highlight {rescues the} {$LOW} {5}
+#highlight {you stumble and fall.$} {$CRITICAL} {5}
+#highlight {sends you sprawling} {$CRITICAL} {5}
+#highlight {stops attacking} {$LOW} {5}
+#highlight {stops fighting} {$LOW} {5}
+#highlight {subdues you, despite your attempts} {$CRITICAL} {5}
+#highlight {throws} {$MEDIUM} {5}
+#highlight {tries to protect} {$LOW} {5}
+#highlight {tries unsuccessfully to dart in front} {$LOW} {5}
+#highlight {{carru|templar|tarantula|scrab|anakore|gortok|gith|bahamet|mekillot|cylops|ciclops|raptor} has arrived} {$LOW} {5}
+#highlight {{charge|charges} into the fight} {$HIGH} {5}
+#highlight {{knocks|knock} a } {$HIGH} {5}
+#highlight {{leaps|leap} in front of } {$LOW} {5}
+#highlight {{reel|reels} from the blow} {$LOW} {5}
+#highlight {{seem|seems} to have {your|his|her|its} hands full} {$LOW} {5}
+#highlight {\ templar\ } {$LOW} {5}
+#highlight {loses%*and falls.$} {$MEDIUM} {5}
+#highlight {A%*stands up.$} {$MEDIUM} {5}
+#highlight {%*reels from your blow.$} {$MEDIUM} {5}
+#highlight {%*is here, fighting%*.$} {$CRITICAL} {5}
+
+#nop -------------------------------------------------------------------------
+#nop Regex colour substitutions to make it clearer who you are attacking.
+#nop -------------------------------------------------------------------------
+
+#substitute {~^${GAME_ROOM}%*${GAME_EXITS} \[%*\]} {${ROOM}%1${EXITS} [%2]${RESET}}
+
+#nop Others attacks
+#substitute {%1 {attacks you.}} {${ENEMY}%1 ${CRITICAL}%2${RESET}}
+#substitute {%1 {lightly|solidly|brutally|viciously} {gores|bites|claws|pecks|hits|chops|stings|stabs|whips|pinches|bludgeons|slashes|pierces} {at you|your|you}%5} {
+${ENEMY}%1 ${CRITICAL}%2 %3 %4%5${RESET}}
+#substitute {%1 {gores|bites|claws|pecks|hits|chops|stings|stabs|whips|pinches|bludgeons|slashes|pierces} {your|you|at you}%4} {
+${ENEMY}%1 ${CRITICAL}%2 %3%4${RESET}}
+#substitute {%1 {gores|bites|claws|pecks|hits|chops|stings|stabs|whips|pinches|bludgeons|slashes|pierces}%3{'s|, barely} %5} {
+${ENEMY}%1 ${CRITICAL}%2${ENEMY}%3${CRITICAL}%4 %5${RESET}}
+#substitute {%1 {gores|bites|claws|pecks|hits|chops|stings|stabs|whips|pinches|bludgeons|slashes|pierces}%3 on %5} {
+${ENEMY}%1 ${CRITICAL}%2${ENEMY}%3${CRITICAL} on %5${RESET}}
+#substitute {%1 {lightly|solidly|brutally|viciously} {gores|bites|claws|pecks|hits|chops|stings|stabs|whips|pinches|bludgeons|slashes|pierces}%4 on %6} {
+${ENEMY}%1 ${CRITICAL}%2 %3${ENEMY}%4 ${CRITICAL}on %6${RESET}}
+
+#nop My attacks
+#substitute {{You} {attack} %3} {${YOU}%1 ${LOW}%2 ${ENEMY}%3${RESET}}
+#substitute {{You} {lightly|solidly|brutally|viciously} {nick|slash|chop|stab|whip|bludgeon|hit|pierce} %4{'s} %6} {${YOU}%1 ${LOW}%2 %3 ${ENEMY}%4%5 ${LOW}%6${RESET}}
+#substitute {{You} {nick|slash|chop|stab|whip|bludgeon|hit|pierce} %3{'s} %5} {${YOU}%1 ${LOW}%2 ${ENEMY}%3%4 ${LOW}%5${RESET}}
+#substitute {{You} {lightly|solidly|brutally|viciously} {nick|slash|chop|stab|whip|bludgeon|hit|pierce} %4 {very|on}%6} {${YOU}%1 ${LOW}%2 %3 ${ENEMY}%4 ${LOW}%5%6${RESET}}
+#substitute {{You} {nick|slash|chop|stab|whip|bludgeon|hit|pierce} %3{, barely| very| on}%5} {${YOU}%1 ${LOW}%2 ${ENEMY}%3${LOW}%4%5${RESET}}
+#substitute {{You} {inflict a grievous wound on} %3{'s} %5} {${YOU}%1 ${LOW}%2 ${ENEMY}%3%4 ${LOW}%5${RESET}}
+#substitute {{You} {wound} %3 {on} %5} {${YOU}%1 ${LOW}%2 ${ENEMY}%3 ${LOW}%4 %5${RESET}}
+#substitute {{You} {do unspeakable damage to} %3{'s} %5} {${YOU}%1 ${LOW}%2 ${ENEMY}%3%4 ${LOW}%5${RESET}}
+#substitute {{You} {land a solid} {nick|slash|chop|stab|whip|bludgeon|hit|pierce} {to} %5{'s} %7} {${YOU}%1 ${LOW}%2 %3 %4 ${ENEMY}%5%6 ${LOW}%7${RESET}}

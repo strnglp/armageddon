@@ -1,0 +1,46 @@
+#echo {Loading globals.}
+
+#variable {mana} {off}
+
+#nop GAME_* are used for color matching regex else where, so use the ANSI colors
+#nop the game will send from the server (after installing infobar)
+#nop bred
+#variable {GAME_ROOM}      {\e[38;5;9m} 
+#nop bwhite
+#variable {GAME_EXITS}     {\e[0m\e[38;5;15m}
+#variable {GAME_OBJECT}    {bgreen}
+#variable {GAME_CHARACTER} {bblue}
+
+
+#variable {FG_BLACK}    {<008>}
+#variable {FG_RED}      {<018>}
+#variable {FG_GREEN}    {<028>}
+#variable {FG_YELLOW}   {<038>}
+#variable {FG_BLUE}     {<048>}
+#variable {FG_MAGENTA}  {<058>}
+#variable {FG_CYAN}     {<068>}
+#variable {FG_WHITE}    {<078>}
+#variable {FG_BBLACK}   {<108>}
+#variable {FG_BRED}     {<118>}
+#variable {FG_BGREEN}   {<128>}
+#variable {FG_BYELLOW}  {<138>}
+#variable {FG_BBLUE}    {<148>}
+#variable {FG_BMAGENTA} {<158>}
+#variable {FG_BCYAN}    {<168>}
+#variable {FG_BWHITE}   {<178>}
+
+#variable {DEFAULT}     {<099>}
+#variable {RESET}       {<088>}
+
+#variable {ROOM}        {$FG_BRED}
+#variable {EXITS}       {$FG_BYELLOW}
+#variable {CRITICAL}    {$FG_RED}
+#variable {HIGH}        {$FG_MAGENTA}
+#variable {MEDIUM}      {$FG_YELLOW}
+#variable {LOW}         {$FG_GREEN}
+#variable {INFO}        {$FG_WHITE}
+#variable {CMD}         {$FG_WHITE}
+#variable {YOU}         {$FG_GREEN}
+#variable {ENEMY}       {$FG_MAGENTA}
+#variable {FRIEND}      {$FG_CYAN}
+#variable {KNOWN}       {$FG_BLUE}

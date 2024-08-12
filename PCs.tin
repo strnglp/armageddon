@@ -1,0 +1,5 @@
+#echo {Loading PC highlights.}
+
+#nop EXAMPLE:
+#nop #substitute {shriveled, little short man} {%0 (Nickname)}
+#nop #highlight {\(Nickname\)} {$FRIEND} {5}

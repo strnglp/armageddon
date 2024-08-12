@@ -1,0 +1,19 @@
+#echo {Loading ehelp command.}
+#format {helpfile} {$logdir/%s.txt} {help};
+
+#alias {ehelp %*} {
+    #event {CATCH RECEIVED OUTPUT} {
+        #variable string %%0;
+        #replace string {PROMPT_%*_LINE%S} {};
+        #replace string {^%s|%s$} {};
+        #replace string {"} {\"};
+        #if {{$string} != ""} {
+            #unevent {CATCH RECEIVED OUTPUT};
+            #system { printf '%s\n' "$string" > "$helpfile" };
+        };
+        #unvariable string;
+    };
+
+    #send {help %1};
+    #echo {Sending help text for %1 to $helpfile}
+} 

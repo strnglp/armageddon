@@ -1,0 +1,9 @@
+#echo {Logging in.}
+
+#SESSION Armageddon ginka.armageddon.org 4050
+#nop Get to the menu faster
+C
+#nop Replace USERNAME with your user name
+USERNAME
+#nop Replace PASSWORD with your user name
+PASSWORD

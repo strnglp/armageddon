@@ -1,0 +1,28 @@
+#echo {Loading duplicate accumulator.}
+#variable prevline {}
+#variable matchcount {1}
+#unvariable checkprompt
+#variable checkprompt {^PROMPT_|^$|^([\r\n\t ]*?)$}
+#unevent {RECEIVED LINE}
+#event {RECEIVED LINE} {
+    #nop ensure we're not receiving a prompt or blank lines;
+    #regexp {%0} {{$checkprompt}} {#nop} {
+        #nop handle duplicates;
+        #if {{%0} === {$prevline}} {
+            #nop count the number of lines to clear by finding the string we are replacing;
+            #buffer info {save} {buffersize};
+            #buffer find {%0} {pos};
+            #math {linesup} {($buffersize[+4] - $pos) * -1};
+            #buffer clear {$linesup} {-1};
+            #buffer refresh;
+            #math {matchcount} {$matchcount + 1};
+            #math {color} {$matchcount % 8};
+            #format {color} {<0%d8>} {$color};
+            #substitute {%0} {%0 ${color}\(x${matchcount}\)${RESET}};
+        } { 
+            #variable {prevline} {%0};
+            #variable {matchcount} {1};
+            #unsubstitute {%0};
+        };
+    };
+}

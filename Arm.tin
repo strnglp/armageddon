@@ -1,0 +1,406 @@
+#nop **** MarshallDFXs TinTin++ Armageddon MUD script ****
+#nop Special thanks to player nauta who originally posted a tintin++ script which I
+#nop took and run with.
+#nop MarshalDFX source: https://github.com/mdfx01/ArmageddonMUD/
+
+#nop **** Strangeloop's TinTin++ Armageddon MUD script ****
+#nop Special thanks to MarshalDFX for sharing his as a starting point :)
+#nop Please note, I have removed some of MarshalDFX's code/features to customize
+#nop for myself, feel free to add them together and make this your own
+
+#nop This script assumes you have an Armageddon folder in your home directory (~/)
+#zap Armageddon; 
+#echo {Starting Arm.}
+#script {armdir} {armdir=$(echo ~/Armageddon); mkdir -p "$armdir" && echo "$armdir"}
+#variable {armdir} {$armdir[1]}
+
+#script {logdir} {mkdir -p $armdir/ArmLogs; cd $armdir/ArmLogs; pwd}
+#variable {logdir} {$logdir[1]}
+#format {logfile} {$logdir/%t.html} {%Y-%m-%d}
+
+#CONFIG {AUTO TAB} {5000}
+#CONFIG {BUFFER SIZE} {1000000}
+#CONFIG {CHARSET} {UTF-8}
+#nop Reduced to 16 for simplicity, controlling colors via terminal settings is
+#nop faster, albiet significantly more limiting in terms of color options
+#nop going with a more is less approach here.
+#CONFIG {COLOR MODE} {ANSI}
+#nop Disabled due to bug in RECEIVED OUTPUT EVENT
+#nop May cause some color leakage so you need to reset colors at line endings
+#nop #CONFIG {COLOR PATCH} {ON}
+#CONFIG {COMMAND COLOR} {$CMD}
+#CONFIG {COMMAND ECHO} {ON}
+#CONFIG {COMPACT} {OFF}
+#CONFIG {CONNECT RETRY} {15.0}
+#CONFIG {HISTORY SIZE} {1000}
+#CONFIG {LOG MODE} {HTML}
+#CONFIG {MOUSE} {ON}
+#CONFIG {PACKET PATCH} {0.50}
+#CONFIG {REPEAT CHAR} {!}
+#CONFIG {REPEAT ENTER} {OFF}
+#CONFIG {SCREEN READER} {OFF}
+#CONFIG {SCROLL LOCK} {ON}
+#CONFIG {SPEEDWALK} {ON}
+#CONFIG {TELNET} {ON}
+#CONFIG {TINTIN CHAR} {#}
+#CONFIG {VERBATIM} {OFF}
+#CONFIG {VERBATIM CHAR} {\}
+#CONFIG {VERBOSE} {OFF}
+#CONFIG {WORDWRAP} {ON}
+#MACRO {\t} {#cursor tab list scrollback caseless forward}
+
+#nop -------------------------------------------------------------------------
+#nop CUSTOM PATHDIRs: these are necessary for mapping when you want the map
+#nop or automapper to follow you into enterable objects like tents
+#nop you may need to add to this list.
+#nop -------------------------------------------------------------------------
+
+#PATHDIR {d}  {u}  {32}
+#PATHDIR {e}  {w}  {2}
+#PATHDIR {n}  {s}  {1}
+#PATHDIR {s}  {n}  {4}
+#PATHDIR {u}  {d}  {16}
+#PATHDIR {w}  {e}  {8}
+#PATHDIR {ne}  {sw}  {3}
+#PATHDIR {nw}  {se}  {9}
+#PATHDIR {se}  {nw}  {6}
+#PATHDIR {sw}  {ne}  {12}
+#PATHDIR {^enter %w$} {leave}
+#nop Testing: Can these just become /^enter %w$/
+#nop #PATHDIR {enter village} {leave}
+#nop #PATHDIR {enter tent} {leave}
+#nop #PATHDIR {enter 2.tent} {leave}
+#nop #PATHDIR {enter stand} {leave}
+#nop #PATHDIR {enter stall} {leave}
+#nop #PATHDIR {enter booth} {leave}
+#nop #PATHDIR {enter building} {leave}
+#nop #PATHDIR {enter pavilion} {leave}
+#nop #PATHDIR {enter ranch} {leave}
+#nop #PATHDIR {enter warehouse} {leave}
+#nop #PATHDIR {enter hovel} {leave}
+#nop #PATHDIR {enter emporium} {leave}
+#nop #PATHDIR {enter encampment} {leave}
+#nop #PATHDIR {enter pen} {leave}
+#nop #PATHDIR {enter hut} {leave}
+#nop #PATHDIR {enter fortress} {leave}
+#nop #PATHDIR {enter corral} {leave}
+#nop #PATHDIR {enter stairway} {leave}
+
+#alias {up} {u}
+#alias {down} {d}
+#alias {west} {w}
+#alias {east} {e}
+#alias {north} {n}
+#alias {south} {s}
+#alias {out} {leave}
+#alias {so} {s}
+#alias {no} {n}
+#alias {do} {d}
+
+
+#nop -------------------------------------------------------------------------
+#nop SOUNDS ALERTS: Uses default bell command which should system beep
+#nop experiences may vary depending on what system/terminal you use
+#nop -------------------------------------------------------------------------
+
+#action {beeps you.$}
+{
+    #bell
+}
+
+#action {^A foreign}
+{
+    #bell
+}
+
+#action {^SYSTEM:}
+{
+    #bell
+}
+
+#nop -------------------------------------------------------------------------
+#nop MOUSE NAV: can click in input bar to move cursor and use scroll wheel for
+#nop the buffer. Issue is right-click-paste doesn't work. use shift+rght clk
+#nop -------------------------------------------------------------------------
+
+#EVENT {SCROLLED MOUSE WHEEL DOWN}
+{
+    #buffer down 4
+}
+
+#EVENT {SCROLLED MOUSE WHEEL UP}
+{
+    #buffer up 4
+}
+
+#nop -------------------------------------------------------------------------
+#nop PROMPT/INFOBAR: InstallInfobar installs prompt and new arm default colors
+#nop use ManaOff or ManaOn to disable/enable mana in the infobar
+#nop -------------------------------------------------------------------------
+
+#alias {installinfobar} {InstallInfobar}
+#alias {installprompt} {InstallInfobar}
+#alias {myprompt} {InstallInfobar}
+
+#alias {InstallInfobar}
+{
+    #nop PROMPT_time_day_hunger_thirst_drunk_mood_LINEONE;
+    #nop PROMPT_hp_maxhp_stamina_maxstamina_stun_maxstun_focus_maxfocus_mana_maxmana_armed_position_LINETWO;
+    #nop PROMPT_encumbrance_speed_riding_accent_language_scan_listen_LINETHREE;
+    #send {prompt PROMPT_%e_%d_%u_%U_%R_%O_LINEONE\\nPROMPT_%h_%H_%v_%V_%t_%T_%x_%X_%m_%M_%A_%s_LINETWO\\nPROMPT_%E_%w_%k_%a_%o_%p_%P_LINETHREE\\n};
+    change color none;
+    change color fg_room_name $GAME_ROOM;
+    change color fg_room_exits $GAME_EXITS;
+    change color fg_object $GAME_OBJECT;
+    change color fg_char $GAME_CHARACTER;
+    change color emphasize on
+}
+
+#alias {ManaOff}
+{
+    #variable mana off;
+    #echo Hiding mana values
+}
+#alias {manaoff} {ManaOff}
+
+#alias {ManaOn}
+{
+    #variable mana on;
+    #echo Displaying mana values
+}
+#alias {manaon} {ManaOn}
+
+
+#nop cval is for colour highlighting of stat values
+#alias {cval}
+{
+    #variable %3 %1;
+    #math {p_h} {%1.00 / %2.00};
+    #if {$p_h <= 0.80 && $p_h > 0.70}
+    {
+        #variable {%3} {${INFO}${%3}${RESET}}
+    };
+    #elseif {$p_h <= 0.70 && $p_h > 0.55}
+    {
+        #variable {%3} {${MEDIUM}${%3}${RESET}}
+    };
+    #elseif {$p_h <= 0.55 && $p_h > 0.25}
+    {
+        #variable {%3} {${HIGH}${%3}${RESET}}
+    };
+    #elseif {$p_h <= 0.25}
+    {
+        #variable {%3} {${CRITICAL}${%3}${RESET}}
+    }
+}
+
+#function {timeicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"before dawn"} #format {result} {${FG_BMAGENTA}%s %n${RESET}} {} {%1};
+        #case {"dawn"} #format {result} {${FG_BYELLOW}%s %n${RESET}} {} {%1};
+        #case {"early morning"} #format {result} {${FG_YELLOW}%s %n${RESET}} {} {%1};
+        #case {"late morning"} #format {result} {${FG_WHITE}%s %n${RESET}} {} {%1};
+        #case {"high sun"} #format {result} {${FG_BWHITE}%s %n${RESET}} {} {%1};
+        #case {"early afternoon"} #format {result} {${FG_RED}%s %n${RESET}} {} {%1};
+        #case {"late afternoon"} #format {result} {${FG_BRED}%s %n${RESET}} {} {%1};
+        #case {"dusk"} #format {result} {${FG_MAGENTA}%s %n${RESET}} {} {%1};
+        #case {"late at night"} #format {result} {${FG_MAGENTA}%s %n${RESET}} {} {%1};
+        #default #format {result} {%1 unhandled time};
+    };
+    #return $result
+}
+
+#function {foodicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"not hungry"} #format {result} {${FG_BGREEN}󱐟 %n${RESET}} {%1};
+        #case {"peckish"} #format {result} {${FG_GREEN}󱐟 %n${RESET}} {%1};
+        #case {"little hungry"} #format {result} {${FG_GREEN}󱐟 %n${RESET}} {%1};
+        #case {"hungry"} #format {result} {${FG_YELLOW}󱐟 %n${RESET}} {%1};
+        #case {"very hungry"} #format {result} {${FG_BYELLOW}󱐟 %n${RESET}} {%1};
+        #case {"starving"} #format {result} {${FG_RED}󱐟 %n${RESET}} {%1};
+        #case {"near death"} #format {result} {${FG_BRED}󱐟 %n${RESET}} {%1};
+        #default #format {result} {%1 unhandled hunger};
+    };
+    #return $result
+}
+
+#function {thirsticon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"not thirsty"} #format {result} {${FG_BGREEN}󰆫 %n${RESET}} {%1};
+        #case {"little thirsty"} #format {result} {${FG_GREEN}󰆫 %n${RESET}} {%1};
+        #case {"thirsty"} #format {result} {${FG_YELLOW}󰆫 %n${RESET}} {%1};
+        #case {"very thirsty"} #format {result} {${FG_BYELLOW}󰆫 %n${RESET}} {%1};
+        #case {"parched"} #format {result} {${FG_RED}󰆫 %n${RESET}} {%1};
+        #case {"dehydrated"} #format {result} {${FG_BRED}󰆫 %n${RESET}} {%1};
+        #default #format {result} {%1 unhandled thirst};
+    };
+    #return $result
+}
+
+#function {drunkicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"sober"} #format {result} {${FG_BGREEN} %n${RESET}} {%1};
+        #case {"tipsy"} #format {result} {${FG_GREEN} %n${RESET}} {%1};
+        #case {"buzzed"} #format {result} {${FG_YELLOW} %n${RESET}} {%1};
+        #case {"drunk"} #format {result} {${FG_BYELLOW} %n${RESET}} {%1};
+        #case {"very drunk"} #format {result} {${FG_RED} %n${RESET}} {%1};
+        #case {"wasted"} #format {result} {${FG_BRED} %n${RESET}} {%1};
+        #case {"blackout drunk"} #format {result} {${FG_BLACK} %n${RESET}} {%1};
+        #default #format {result} {%1 unhandled drunk};
+    };
+    #return $result
+}
+
+#function {armedicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"armed"} #format {result} {${FG_YELLOW}󰓥 %n${RESET}} {%1};
+        #case {"unarmed"} #format {result} {${FG_WHITE} %n${RESET}} {%1};
+        #default #format {result} {%1 unhandled weapons};
+    };
+    #return $result
+}
+
+#function {stanceicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"standing"} #format {result} {${FG_BGREEN} %n${RESET}} {%1};
+        #case {"sitting"} #format {result} {${FG_CYAN}󱉉 %n${RESET}} {%1};
+        #case {"resting"} #format {result} {${FG_BLUE}󰋣 %n${RESET}} {%1};
+        #case {"sleeping"} #format {result} {${FG_MAGENTA}󰒲 %n${RESET}} {%1};
+        #case {"fighting:%*"} #format {result} {${FG_RED}󰞇 %n${RESET}} {%1};
+        #default #format {result} {%1 unhandled stance};
+    };
+    #return $result
+}
+
+#function {weighticon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"very light"} #format {result} {${FG_GREEN}󰖡 %n${RESET}} {%1};
+        #case {"no problem"} #format {result} {${FG_BGREEN}󰖡 %n${RESET}} {%1};
+        #case {"light"} #format {result} {${FG_CYAN}󰖡 %n${RESET}} {%1};
+        #case {"easily manageable"} #format {result} {${FG_BCYAN}󰖡 %n${RESET}} {%1};
+        #case {"manageable"} #format {result} {${FG_BWHITE}󰖡 %n${FG_YELLOW}} {%1};
+        #case {"heavy, but manageable"} #format {result} {${FG_BYELLOW}󰖡 %n${RESET}} {%1};
+        #case {"very heavy"} #format {result} {${FG_RED}󰖡 %n${RESET}} {%1};
+        #case {"VERY heavy"} #format {result} {${FG_BRED}󰖡 %n${RESET}} {%1};
+        #case {"extremely heavy"} #format {result} {${FG_MAGENTA}󰖡 %n${RESET}} {%1};
+        #case {"unbelievably heavy"} #format {result} {${FG_BMAGENTA}󰖡 %n${RESET}} {%1};
+        #default #format {result} {%1 unhandled weight};
+    };
+    #return $result
+}
+
+#function {speedicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"sneaking"} #format {result} {${FG_BLUE}󰖃 %n${RESET}} {%1};
+        #case {"walking"} #format {result} {${FG_WHITE} %n${RESET}} {%1};
+        #case {"running"} #format {result} {${FG_YELLOW}󰑮 %n${RESET}} {%1};
+        #default #format {result} {%1 unhandled speed};
+    };
+    #return $result
+}
+
+#function {ridingicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"riding: none"} #format {result} {};
+        #default #format {result} { ${FG_WHITE}󱗁 %n${FG_BWHITE}} {%1};
+    };
+    #return $result
+}
+
+#function {listenicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"Listen"} #format {result} { ${FG_CYAN}󰟅 %sing${RESET}} {%1};
+        #default #format {result} {};
+    };
+    #return $result
+}
+
+#function {scanicon} {
+    #local {result} {};
+    #switch {"%1"} {
+        #case {"Scan"} #format {result} { ${FG_CYAN} %sing${RESET}} {%1};
+        #default #format {result} {};
+    };
+    #return $result
+}
+#nop top bar
+#action {PROMPT_%1_%2_%3_%4_%5_%6_LINEONE}
+{
+    #format {clearline} {%+200s};
+    #showme {$clearline} {2} {3};
+    #format {lineone} { %s on %n  %s  %s  %n   %n} {@timeicon{%1}} {%2} {@foodicon{%3}} {@thirsticon{%4}} {@drunkicon{%5}} {%6};
+    #showme {${RESET}$lineone} {2} {3};
+}
+{1}
+#nop bottom bar
+#action {PROMPT_%1_%2_%3_%4_%5_%6_%7_%8_%9_%10_%11_%12_LINETWO}
+{
+    #format {clearline} {%+200s};
+    #showme {$clearline} {-4} {3};
+    cval {%1} {%2} {h};
+    cval {%3} {%4} {v};
+    cval {%5} {%6} {t};
+    cval {%7} {%8} {f};
+    cval {%9} {%10} {m};
+    #if {"$mana" == "off"}
+    {
+        #showme { ${FG_BRED}${RESET} ${h}/%2 ${FG_BGREEN}${RESET} ${v}/%4 ${FG_BYELLOW}${RESET} ${t}/%6 ${FG_BMAGENTA}${RESET} ${f}/%8 @armedicon{%11} @stanceicon{%12}} {-4} {3}
+    };
+    #else
+    {
+        #showme { ${FG_BRED}${RESET} ${h}/%2 ${FG_BGREEN}${RESET} ${v}/%4 ${FG_BYELLOW}${RESET} ${t}/%6 ${FG_BMAGENTA}${RESET} ${f}/%8 ${FG_BBLUE}${RESET} ${m}/%10 @armedicon{%11} @stanceicon{%12}} {-4} {3}
+    }
+}
+{1}
+#nop bottom bar
+#action {PROMPT_%1_%2_%3_%4_%5_%6_%7_LINETHREE}
+{
+    #format {clearline} {%+200s};
+    #showme {$clearline} {-3} {3};
+    #format {linethree} { @weighticon{%1} @speedicon{%2}@ridingicon{%3} 󰭹 %n %n${RESET}@scanicon{%6}@listenicon{%7}} {%4} {%5};
+    #showme {${RESET}$linethree} {-3} {3};
+}
+{1}
+
+#gag {PROMPT_%*_LINEONE}
+#gag {PROMPT_%*_LINETHREE}
+#gag {PROMPT_%*_LINETWO}
+
+#nop Note when creating splits lines without text will be box drawing characters
+#nop 3 lines on top
+#nop 4 lines on bottom
+#nop 85 columns for map
+#split 3 4 0 -85
+
+#nop Must come first******************************
+#read {$armdir/Login.tin};
+#read {$armdir/Map.tin};
+#nop *********************************************
+
+#nop Constants used throughout the scripts
+#read {$armdir/Globals.tin};
+
+#nop General highlighting
+#read {$armdir/HL.tin};
+
+#nop PC names
+#read {$armdir/PCs.tin};
+
+#nop External help file reading in second terminal
+#read {$armdir/Help.tin};
+
+#nop Accumulate repeated lines into one line
+#read {$armdir/Accumulator.tin};
+
+#nop reload it all
+#alias {reconnect} {#read $armdir/Arm.tin}
