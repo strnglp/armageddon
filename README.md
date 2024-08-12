@@ -21,7 +21,9 @@ These are TinTin++ scripts (.tin) They will not work with any other MUD/MUSH cli
 https://www.nerdfonts.com
 
 If you're not familiar with NerdFonts, they are font files that include myriad icons as characters.
+
 Without a NerdFont your prompts will look messed up. 
+
 There are a variety to choose from, I personally use _JetBrainsMono Nerd Font_.
 
 ### Install these scripts
@@ -30,7 +32,9 @@ Using git:
 `git clone git@github.com:strnglp/armageddon.git ~/Armageddon` 
 
 Downloading a release zip:
+
 On the right side of this github repository page you should see the latest **Releases**.
+
 Download and exract `Sources.zip` to `$HOME/Armageddon`
 
 ## Configuration
@@ -58,6 +62,7 @@ Check out `PCs.tin` for an example of how you can highlight people you know and 
 
 #### Colorscheme
 Don't like the colors in use? Change them in your terminal settings, **not the script**!
+
 These scripts were designed to utilize ANSI colors, here are some screenshots of where you change these colors for Terminal.app on MacOS. If you're using a different terminal emulator or operating system you probably have something like this in your preferences window.
 
 ![Arm dark coloscheme](./media/armdarksettings.png)
@@ -68,7 +73,9 @@ _Note: TinTin++ supports vastly more colors than the 16 ANSI colors I chose to u
 
 #### External help files
 Ever want to read the help for a command but don't want to spam your window?
+
 Open a second terminal window (or tab) and run `bash ~/Armageddon/WatchHelp.sh`
+
 Now in your game terminal window (or tab) type `ehelp <topic>`
 
 You'll get output like this in your second window.
@@ -77,10 +84,12 @@ You'll get output like this in your second window.
 ## Play
 **In your terminal type:**
 `tt++ ~/Armageddon/Arm.tin` **to play Armageddon!**
+
 Shade and water.
 
 ## Mapping
 The script will create a map file for you if you don't have a `MyMap.map` in your `~/Armageddon` directory.
+
 Mapping in TinTin++ is complex and _highly_ error prone. If you are not technically minded this will be an exercise in futility for you. In which case I recommend disabling the map.
 
 In `Arm.tin`: 
