@@ -30,7 +30,8 @@ Using git:
 `git clone git@github.com:strnglp/armageddon.git ~/Armageddon` 
 
 Downloading a release zip:
-Exract .zip to `$HOME/Armageddon`
+On the right side of this github repository page you should see the latest **Releases**.
+Download and exract `Sources.zip` to `$HOME/Armageddon`
 
 ## Configuration
 ### NerdFont (required)
