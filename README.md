@@ -86,7 +86,7 @@ In `Arm.tin`:
 - Delete this line: `#read {$armdir/Map.tin};`
 - Edit this line: `#split 3 4 0 -85` and delete the 0 -85
 
-_Note: I'll make this easier in the future.~
+_Note: I'll make this easier in the future._
 
 ## Credits
 These scripts were derived from MarshalDFX's work: https://github.com/mdfx01/ArmageddonMUD/
