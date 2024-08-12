@@ -6,6 +6,7 @@ Disclaimer: These may not work on Windows yet, I'll put some time into making th
 - [Prerequisites](#prerequisites)
 - [Configuration](#configuration)
 - [Play](#play)
+- [Screenshots](#screenshots)
 - [Mapping](#mapping)
 - [Credits](#credits)
 
@@ -86,6 +87,11 @@ You'll get output like this in your second window.
 `tt++ ~/Armageddon/Arm.tin` **to play Armageddon!**
 
 Shade and water.
+
+## Screenshots
+![Arm Darkmode](./media/screenshot.png)
+![Deduplication](./media/duplicates.gif)
+
 
 ## Mapping
 The script will create a map file for you if you don't have a `MyMap.map` in your `~/Armageddon` directory.
