@@ -74,8 +74,9 @@ You'll get output like this in your second window.
 ![ehelp example](./media/manpage.png)
 
 ## Play
-In your terminal type:
-`tt++ ~/Armageddon/Arm.tin`
+**In your terminal type:**
+`tt++ ~/Armageddon/Arm.tin` **to play Armageddon!**
+Shade and water.
 
 ## Mapping
 The script will create a map file for you if you don't have a `MyMap.map` in your `~/Armageddon` directory.
