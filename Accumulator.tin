@@ -2,7 +2,8 @@
 #variable prevline {}
 #variable matchcount {1}
 #unvariable checkprompt
-#variable checkprompt {^PROMPT_|^$|^([\r\n\t ]*?)$}
+#nop ignore prompts, empty lines, and equipment lines
+#variable checkprompt {^PROMPT_|^$|^([\r\n\t ]*?)$|^<}
 #unevent {RECEIVED LINE}
 #event {RECEIVED LINE} {
     #nop ensure we're not receiving a prompt or blank lines;

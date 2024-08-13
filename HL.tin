@@ -33,7 +33,7 @@
 #highlight {[armed]} {$INFO} {5}
 #highlight {[running]} {$INFO} {5}
 #highlight {[sneaking]} {$INFO} {5}
-#highlight {^%s"%0"} {$INFO} {5}
+#highlight {^ %s"%0"} {$INFO} {5}
 #highlight {asks you,} {$YOU} {5}
 #highlight {says to you} {$YOU} {5}
 #highlight {out of character} {$INFO} {5}
