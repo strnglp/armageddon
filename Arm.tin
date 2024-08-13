@@ -211,6 +211,7 @@
     #local {result} {};
     #switch {"%1"} {
         #case {"full"} #format {result} {${FG_BGREEN}󱐟 %n${RESET}} {%1};
+        #case {"satisfied"} #format {result} {${FG_BGREEN}󱐟 %n${RESET}} {%1};
         #case {"peckish"} #format {result} {${FG_GREEN}󱐟 %n${RESET}} {%1};
         #case {"little hungry"} #format {result} {${FG_GREEN}󱐟 %n${RESET}} {%1};
         #case {"hungry"} #format {result} {${FG_YELLOW}󱐟 %n${RESET}} {%1};
