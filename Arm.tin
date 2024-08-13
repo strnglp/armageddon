@@ -14,10 +14,6 @@
 #script {armdir} {armdir=$(echo ~/Armageddon); mkdir -p "$armdir" && echo "$armdir"}
 #variable {armdir} {$armdir[1]}
 
-#script {logdir} {mkdir -p $armdir/ArmLogs; cd $armdir/ArmLogs; pwd}
-#variable {logdir} {$logdir[1]}
-#format {logfile} {$logdir/%t.html} {%Y-%m-%d}
-
 #CONFIG {AUTO TAB} {5000}
 #CONFIG {BUFFER SIZE} {1000000}
 #CONFIG {CHARSET} {UTF-8}
@@ -385,6 +381,10 @@
 #nop Must come first******************************
 #read {$armdir/Login.tin};
 #read {$armdir/Map.tin};
+#script {logdir} {mkdir -p $armdir/ArmLogs; cd $armdir/ArmLogs; pwd}
+#variable {logdir} {$logdir[1]}
+#format {logfile} {$logdir/%t.html} {%Y-%m-%d}
+#log append $logfile;
 #nop *********************************************
 
 #nop Constants used throughout the scripts
