@@ -1,4 +1,7 @@
 #echo {Loading duplicate accumulator.}
+#script {screenheight} {tput lines}
+#nop height of the terminal, minus the split for promps
+#math {screenheight} {$screenheight[1] * -1 + 7}
 #variable prevline {}
 #variable matchcount {1}
 #unvariable checkprompt
@@ -14,12 +17,14 @@
             #buffer info {save} {buffersize};
             #buffer find {%0} {pos};
             #math {linesup} {($buffersize[+4] - $pos) * -1};
-            #buffer clear {$linesup} {-1};
-            #buffer refresh;
-            #math {matchcount} {$matchcount + 1};
-            #math {color} {$matchcount % 8};
-            #format {color} {<0%d8>} {$color};
-            #substitute {%0} {%0 ${color}\(x${matchcount}\)${RESET}};
+            #if {$linesup < 0 && $linesup > $screenheight} {
+                #buffer clear {$linesup} {-1};
+                #buffer refresh;
+                #math {matchcount} {$matchcount + 1};
+                #math {color} {$matchcount % 8};
+                #format {color} {<0%d8>} {$color};
+                #substitute {%0} {%0 ${color}\(x${matchcount}\)${RESET}};
+            }
         } { 
             #variable {prevline} {%0};
             #variable {matchcount} {1};

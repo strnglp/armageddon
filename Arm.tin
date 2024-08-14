@@ -390,18 +390,22 @@
 
 #nop Constants used throughout the scripts
 #read {$armdir/Globals.tin};
+#alias {rlglobals} { #read {$armdir/Globals.tin} }
 
 #nop General highlighting
 #read {$armdir/HL.tin};
+#alias {rlhl} { #read {$armdir/HL.tin} }
 
 #nop PC names
 #read {$armdir/PCs.tin};
+#alias {rlpc} { #read {$armdir/PCs.tin} }
 
 #nop External help file reading in second terminal
 #read {$armdir/Help.tin};
 
 #nop Accumulate repeated lines into one line
 #read {$armdir/Accumulator.tin};
+#alias {rlacc} { #read {$armdir/Accumulator.tin} }
 
 #nop reload it all
 #alias {reconnect} {#read $armdir/Arm.tin}
