@@ -1,0 +1,131 @@
+#echo {Loading duplicate accumulator2.};
+#nop This pattern will probably grow over time, these are things we don't;
+#nop want to delete in the case of a repeat, e.g. lines starting with < are equipment;
+#variable ignore_pattern {{^[^<].*}};
+#nop #variable ignore_pattern {{^(?!\s*$)[^<\s].*}};
+
+#script {screenheight} {tput lines};
+#math {screenheight} {$screenheight[1] * -1 + 7};
+#variable match_count {1};
+#variable prev_seq {};
+#unevent {RECEIVED OUTPUT};
+#event {RECEIVED OUTPUT} {
+    #local index {};
+    #local line {};
+    #local onscreen {};
+    #local color {};
+
+    #nop First check if we've previously found matches and delete the counter;
+    #buffer find {↳ \(\+%d\)} {index};
+    #if {$index !== 0} {
+        #buffer clear {$index-1} {$index};
+        #buffer refresh;
+    };
+
+    #buffer get {onscreen} {$screenheight} {-1};
+    #list onscreen reverse;
+    #list onscreen filter {$ignore_pattern};
+    #local res {@longest_contiguous_seq{{$onscreen}}};
+    #local lower {$res[end]};
+    #local upper {$res[start]};
+    #if {$lower != 0 && $upper != 0} {
+        #nop #system {echo "lower: $lower upper: $upper" > test.txt};
+        #nop If we find a contiguous sequence clear the repeat;
+        #buffer clear {$lower} {$upper};
+        #buffer refresh;
+        #nop Show a repeat counter;
+        #math {match_count} {$match_count + 1};
+        #math {color} {$match_count % 8};
+        #format {color} {<0%d8>} {$color};
+        #showme {${color}↳ \(+$match_count\)${RESET}};
+        #nop Cache the sequence to test intermediate lines;
+        #variable prev_seq {$res[seq]};
+        #buffer refresh;
+    } {
+        #nop We didn't find a contiguous sequence...;
+        #nop If the new line is in the prev_seq it may be that we're amidst a mid-sequence update;
+        #nop Only clear the count if the latest line is not in the prev_seq;
+        #local prev_line {};
+        #local new_line {};
+        #buffer get {new_line} {-1};
+        #nop Don't count blank lines, the appear all the time, sometimes from prompts;
+        #if {{$new_line} == {{^\s*[^\S[:print:]]*\s*$}} } { 
+            #return; 
+        };
+        #foreach {$prev_seq[%*]} {prev_line} {
+            #if {{$new_line} === {$prev_line}} {
+                #nop Don't clear the counter yet;
+                #return;
+            };
+        };
+
+        #nop Ok to clear the counter, the latest line isn't a part of the prev_seq;
+        #list prev_seq clear;
+        #variable match_count {1};
+    };
+}
+
+#function longest_contiguous_seq {
+    #local arr {%1};
+    #local n {&arr[]};
+    #if {$n == 0} { #return {} };
+    #local max_seq {};
+    #local max_length {0};
+    #local match_start {0};
+    #local match_end {0};
+    #local max_repeat {0};
+
+    #nop Iterate over each possible starting point and slide a match window ahead;
+    #loop {1} {$n} {start} {
+        #nop Limit the sliding window to half the array length;
+        #local end_of_range {0};
+        #math end_of_range {($n - $start) / 2 + 1};
+        #loop {1} {$end_of_range} {length} {
+            #local seq_end {0};
+            #math seq_end {$start + $length};
+            #local seq {};
+            #list seq create {$arr[+$start..+$seq_end]};
+
+            #local next {0};
+            #local next_end {0};
+            #local next_seq {};
+            #local next {$seq_end + 1};
+            #math next_end {$next + $length};
+            #local repeat_count {1};
+            #while {$next_end <= $n} {
+                #list next_seq clear;
+                #list next_seq create {$arr[+$next..+$next_end]};
+                #if {{$next_seq} === {$seq}} {
+                    #math repeat_count {$repeat_count + 1};
+                    #math next {$next_end + 1};
+                    #math next_end {$next + $length};
+                }
+                {
+                    #break
+                };
+            };
+
+            #local total_length {0};
+            #if {$repeat_count > 1} {
+                #math total_length {$length * ($repeat_count - 1)};
+                #if {$total_length > $max_length} {
+                    #local match_start {$start};
+                    #local max_length {$total_length};
+                    #math match_end {$start + $total_length};
+                    #list max_seq clear;
+                    #list max_seq create {$arr[+$start..+$match_end]};
+                    #local max_repeat {$repeat_count};
+                }
+            };
+
+        };
+    };
+    #math match_start {$match_start * -1};
+    #math match_end {$match_end * -1};
+    #variable result {
+        {start}{$match_start}
+        {end}{$match_end}
+        {seq}{$max_seq}
+    };
+    #return $result;
+}

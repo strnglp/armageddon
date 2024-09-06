@@ -145,11 +145,12 @@
     #nop PROMPT_encumbrance_speed_riding_accent_language_scan_listen_LINETHREE;
     #send {prompt PROMPT_%e_%d_%u_%U_%R_%O_LINEONE\\nPROMPT_%h_%H_%v_%V_%t_%T_%x_%X_%m_%M_%A_%s_LINETWO\\nPROMPT_%E_%w_%k_%a_%o_%p_%P_LINETHREE\\n};
     change color none;
-    change color fg_room_name $GAME_ROOM;
-    change color fg_room_exits $GAME_EXITS;
+    change color fg_room_name bred;
+    change color fg_room_exits bwhite;
     change color fg_object $GAME_OBJECT;
     change color fg_char $GAME_CHARACTER;
-    change color emphasize on
+    change color emphasize on;
+    pagelength 100;
 }
 
 #alias {ManaOff}
@@ -210,12 +211,13 @@
 #function {foodicon} {
     #local {result} {};
     #switch {"%1"} {
-        #case {"full"} #format {result} {${FG_BGREEN}󱐟 %n${RESET}} {%1};
+        #case {"stuffed"} #format {result} {${FG_BCYAN}󱐟 %n${RESET}} {%1};
+        #case {"full"} #format {result} {${FG_GREEN}󱐟 %n${RESET}} {%1};
         #case {"satisfied"} #format {result} {${FG_BGREEN}󱐟 %n${RESET}} {%1};
-        #case {"peckish"} #format {result} {${FG_GREEN}󱐟 %n${RESET}} {%1};
-        #case {"little hungry"} #format {result} {${FG_GREEN}󱐟 %n${RESET}} {%1};
-        #case {"hungry"} #format {result} {${FG_YELLOW}󱐟 %n${RESET}} {%1};
-        #case {"very hungry"} #format {result} {${FG_BYELLOW}󱐟 %n${RESET}} {%1};
+        #case {"peckish"} #format {result} {${FG_YELLOW}󱐟 %n${RESET}} {%1};
+        #case {"little hungry"} #format {result} {${FG_BYELLOW}󱐟 %n${RESET}} {%1};
+        #case {"hungry"} #format {result} {${FG_MAGENTA}󱐟 %n${RESET}} {%1};
+        #case {"very hungry"} #format {result} {${FG_BMAGENTA}󱐟 %n${RESET}} {%1};
         #case {"starving"} #format {result} {${FG_RED}󱐟 %n${RESET}} {%1};
         #case {"near death"} #format {result} {${FG_BRED}󱐟 %n${RESET}} {%1};
         #default #format {result} {%1 unhandled hunger};
@@ -404,8 +406,11 @@
 #read {$armdir/Help.tin};
 
 #nop Accumulate repeated lines into one line
-#read {$armdir/Accumulator.tin};
-#alias {rlacc} { #read {$armdir/Accumulator.tin} }
+#nop #read {$armdir/Accumulator2.tin};
+#alias {rlacc} { #read {$armdir/Accumulator2.tin} }
+
+#read {$armdir/Alias.tin};
+#alias {rlalias} { #read {$armdir/Alias.tin} }
 
 #nop reload it all
 #alias {reconnect} {#read $armdir/Arm.tin}

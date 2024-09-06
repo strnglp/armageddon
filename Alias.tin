@@ -1,0 +1,55 @@
+#unevent {CATCH RECEIVED OUTPUT};
+#function parse_looks {
+    #variable look_chunk_count {0};
+    #event {CATCH RECEIVED OUTPUT} {
+        #math look_chunk_count {$look_chunk_count + 1};
+        #variable string {%%0};
+        #replace string {PROMPT_%*\n} {};
+        #replace string {\[%*\]\nNothing.\n} {};
+        #replace string {You see nothing special.\n} {};
+        #replace string {^\n$} {};
+        #if {"$string" != ""} {
+            #showme {$string};
+        };
+
+        #if {$look_chunk_count === 12} {
+            #unevent {CATCH RECEIVED OUTPUT};
+            #variable {look_chunk_count} {0};
+        };
+    };
+}
+
+#alias {la} {
+    #variable z {@parse_looks{}};
+    l n;
+    l s;
+    l e;
+    l w;
+    l d;
+    l u;
+}
+
+#alias {dis} {disengage}
+
+#alias {startm} {
+    draw spear;
+    es shield;
+}
+#alias {endm} {
+    sheath spear;
+    rem shield;
+}
+#alias {startr} {
+    rem bow;
+    es bow;
+    pull quiver;
+}
+#alias {endr} {
+    rem bow;
+    wear bow;
+}
+
+#alias {skinning} {
+    get knife belt;
+    ep knife;
+}

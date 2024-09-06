@@ -4,9 +4,9 @@
 
 #nop GAME_* are used for color matching regex else where, so use the ANSI colors
 #nop the game will send from the server (after installing infobar)
-#nop bred
+#nop bred cached as ansi escape seq for use in regex
 #variable {GAME_ROOM}      {\e[38;5;9m} 
-#nop bwhite
+#nop bwhite cached as ansi escape seq for use in regex
 #variable {GAME_EXITS}     {\e[0m\e[38;5;15m}
 #variable {GAME_OBJECT}    {bgreen}
 #variable {GAME_CHARACTER} {bblue}

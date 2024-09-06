@@ -21,7 +21,6 @@
 #action {^You try to climb, but slip.} {#map undo}
 #action {Maybe you should get on your feet first.} {#map undo}
 #action {That opening is too small for you.} {#map undo}
-#action {^You feel too relaxed to do that.} {#map undo}
 #action {, stepping in front of you.$} {#map undo}
 #action {steps in front of you, blocking your path.$} {#map undo}
 #action {scowls at you and blocks their path into the warehouse.$} {#map undo}
@@ -88,7 +87,7 @@
         };
         #nop mapping highlights and info;
         #map set roomname %1;
-        #regexp {%2} {{^Inside the.*Gate|Road|Circle|Walk|Way|Path|Street|Aisle|Archway|Plaza|Alley|Alleyway}} {
+        #regexp {%1} {{^Inside the.*Gate|Road|Circle|Walk|Way|Path|Street|Aisle|Archway|Plaza|Alley|Alleyway}} {
                 #map get {roomsymbol} {symbol};
                 #if {{$symbol} == "{| }"} {
                         #map set roomcolor ${FG_BYELLOW}
