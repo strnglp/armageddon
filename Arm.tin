@@ -61,26 +61,24 @@
 #PATHDIR {nw}  {se}  {9}
 #PATHDIR {se}  {nw}  {6}
 #PATHDIR {sw}  {ne}  {12}
-#PATHDIR {^enter %w$} {leave}
-#nop Testing: Can these just become /^enter %w$/
-#nop #PATHDIR {enter village} {leave}
-#nop #PATHDIR {enter tent} {leave}
-#nop #PATHDIR {enter 2.tent} {leave}
-#nop #PATHDIR {enter stand} {leave}
-#nop #PATHDIR {enter stall} {leave}
-#nop #PATHDIR {enter booth} {leave}
-#nop #PATHDIR {enter building} {leave}
-#nop #PATHDIR {enter pavilion} {leave}
-#nop #PATHDIR {enter ranch} {leave}
-#nop #PATHDIR {enter warehouse} {leave}
-#nop #PATHDIR {enter hovel} {leave}
-#nop #PATHDIR {enter emporium} {leave}
-#nop #PATHDIR {enter encampment} {leave}
-#nop #PATHDIR {enter pen} {leave}
-#nop #PATHDIR {enter hut} {leave}
-#nop #PATHDIR {enter fortress} {leave}
-#nop #PATHDIR {enter corral} {leave}
-#nop #PATHDIR {enter stairway} {leave}
+#PATHDIR {enter village} {leave}
+#PATHDIR {enter tent} {leave}
+#PATHDIR {enter 2.tent} {leave}
+#PATHDIR {enter stand} {leave}
+#PATHDIR {enter stall} {leave}
+#PATHDIR {enter booth} {leave}
+#PATHDIR {enter building} {leave}
+#PATHDIR {enter pavilion} {leave}
+#PATHDIR {enter ranch} {leave}
+#PATHDIR {enter warehouse} {leave}
+#PATHDIR {enter hovel} {leave}
+#PATHDIR {enter emporium} {leave}
+#PATHDIR {enter encampment} {leave}
+#PATHDIR {enter pen} {leave}
+#PATHDIR {enter hut} {leave}
+#PATHDIR {enter fortress} {leave}
+#PATHDIR {enter corral} {leave}
+#PATHDIR {enter stairway} {leave}
 
 #alias {up} {u}
 #alias {down} {d}
